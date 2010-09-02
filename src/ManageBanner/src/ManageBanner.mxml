@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				backgroundGradientAlphas="[1.0, 1.0]" 
+				backgroundGradientColors="[#FFFFFF, #FFFFFF]" 
+				initialize="requestData.send();">
+	<mx:Script>
+		<![CDATA[			
+		
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.http.HTTPService;
+    		import flash.net.URLRequest;
+    		import flash.net.URLRequestMethod;
+    		import flash.net.URLVariables;    		    
+			import mx.controls.Alert;
+			
+
+			private function configureListeners(dispatcher:IEventDispatcher):void {
+	            dispatcher.addEventListener(Event.COMPLETE, completeHandler);
+	            dispatcher.addEventListener(Event.OPEN, openHandler);
+	            dispatcher.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+	            dispatcher.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+	            dispatcher.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+	            dispatcher.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+        	}
+
+
+
+	        private function completeHandler(event:Event):void {
+	            var loader:URLLoader = URLLoader(event.target);	           
+
+	            Alert.show(loader.data);
+	        }
+	
+	        private function openHandler(event:Event):void {
+	            trace("openHandler: " + event);
+	        }
+
+	        private function progressHandler(event:ProgressEvent):void {
+	            trace("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
+	        }
+	
+	        private function securityErrorHandler(event:SecurityErrorEvent):void {
+	            trace("securityErrorHandler: " + event);
+	        }
+
+	        private function httpStatusHandler(event:HTTPStatusEvent):void {
+	            trace("httpStatusHandler: " + event);
+	        }	
+
+	        private function ioErrorHandler(event:IOErrorEvent):void {
+	            Alert.show("Erro ao processar a solicitação para o servidor.");
+	        }
+			
+
+			// Envia os campos textarea para serem gravados no banco de dados pelo PHP.
+			private function saveData():void {
+				var url:String = "/wp-content/plugins/manage-banner/includes/banners-save.php";
+            	var request:URLRequest = new URLRequest(url);
+            	var loader:URLLoader = new URLLoader();                  	
+            	var variables:URLVariables = new URLVariables();
+
+            	//Alert.show(address);
+            
+            	configureListeners(loader);            	
+
+            	            
+            	variables.exampleSessionId = new Date().getTime();            	                        	            	          
+            	variables.txtBlock1 = txtBlock1.text;
+            	variables.txtBlock2 = txtBlock2.text;
+            	variables.txtBlock3 = txtBlock3.text;
+            	variables.txtBlock4 = txtBlock4.text;            	
+            	variables.txtBlock5 = txtBlock5.text;
+            	            
+
+            	request.data = variables;
+            	request.contentType = "application/x-www-form-urlencoded";
+            	request.method = URLRequestMethod.POST;            
+
+            
+
+				try {
+                	loader.load(request);                	
+                	                	
+            	} catch (error:Error) {
+                	trace("Unable to load requested document.");
+            	}
+			}		
+
+
+			private function resultData(evt:ResultEvent) :void {
+                var resultObj:Object = evt.result;
+              
+                /* Assign the values... */
+                txtBlock1.text = resultObj.root.block_1;
+                txtBlock2.text = resultObj.root.block_2;
+                txtBlock3.text = resultObj.root.block_3;
+                txtBlock4.text = resultObj.root.block_4;
+                txtBlock5.text = resultObj.root.block_5;                                          
+            }
+		]]>
+
+	</mx:Script>
+
+	<mx:HTTPService id="requestData"
+					url="/wp-content/plugins/manage-banner/includes/load-banners.xml.php"
+					result="resultData(event);"
+					resultFormat="object">
+	</mx:HTTPService>
+
+	<mx:Panel x="10" y="10" width="523" height="587" layout="absolute" title="Insira os banners abaixo: " borderColor="#cccccc">				
+
+		<mx:TextArea x="95" y="10" width="392" height="93" id="txtBlock1" editable="true" wordWrap="true" enabled="true"/>
+		<mx:Label x="10" y="11" text="ID: block_1"/>		
+
+		<mx:TextArea x="95" y="111" width="392" height="93" id="txtBlock2" editable="true" wordWrap="true" enabled="true"/>
+		<mx:Label x="10" y="112" text="ID: block_2"/>
+
+		<mx:TextArea x="95" y="211" width="393" height="93" id="txtBlock3" editable="true" wordWrap="true" enabled="true"/>
+		<mx:Label x="16" y="212" text="ID: block_3"/>
+
+		<mx:TextArea x="97" y="311" width="391" height="93" id="txtBlock4" editable="true" wordWrap="true" enabled="true"/>
+		<mx:Label x="16" y="312" text="ID: block_4"/>
+
+		<mx:TextArea x="97" y="411" width="391" height="93" id="txtBlock5" editable="true" wordWrap="true" enabled="true"/>
+		<mx:Label x="10" y="412" text="ID: block_5"/>
+		
+		<mx:Button x="408" y="512" label="Salvar" width="80" id="btnSave" click="saveData()"  fillAlphas="[1.0, 1.0, 1.0, 1.0]"/>
+		
+	</mx:Panel>
+</mx:Application>

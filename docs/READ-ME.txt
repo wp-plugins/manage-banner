@@ -1,0 +1,43 @@
+# Manage Banner
+
+
+Plugin de gerenciamento e exibição de blocos de banners para 
+propagandas em domínios utilizando o mecanismo wordpress.
+
+
+Instalação
+
+    - Para ativação, vá até o painel de controle do wordpress -> plugins e 
+    ative o plugin Manage Adsense.
+
+    - Agora no menu lateral click em Manage Adsense e adicione o(s) codigo(s) 
+    nos campos do painel administrativo do plugin e salve;
+    
+    - Para exibir os banners use o método loadBanner:
+    
+        Ex.:
+        
+            <?php ManageBanner::loadBanner("block_1"); ?>
+                      
+            ou
+            
+            <?php ManageBanner::loadBanner("block_2"); ?>
+            
+            <?php ManageBanner::loadBanner("block_3"); ?>
+            
+            <?php ManageBanner::loadBanner("block_4"); ?>
+            
+            <?php ManageBanner::loadBanner("block_5"); ?>
+            
+        
+    - Opções correspondente aos campos textarea do painel administrativo do plugin:
+        
+        block_1
+        
+        block_2
+        
+        block_3
+        
+        block_4
+        
+        block_5
